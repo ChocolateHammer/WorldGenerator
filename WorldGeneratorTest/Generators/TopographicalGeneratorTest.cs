@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using WorldGenerator.Generators;
-using WorldGenerator.WorldLayers;
 
 namespace WorldGeneratorTest.Generators
 {
@@ -18,6 +10,7 @@ namespace WorldGeneratorTest.Generators
         const int INIT_VALUE = -100;
         const int VARIANCE = 10;
         const int MAX_HEIGHT = 50;
+        const int SMALL_TEST_SIZE = 50;
 
 
         private TopographicalGenerator _generator;
@@ -25,29 +18,50 @@ namespace WorldGeneratorTest.Generators
         [SetUp]
         public void Setup()
         {
-            _generator = new TopographicalGenerator(KNOWN_SEED,
-                IngoreSizeTopoMatrix.SMALL_TEST_SIZE, 
-                MAX_HEIGHT, VARIANCE, INIT_VALUE);
+            _generator = new TopographicalGenerator(KNOWN_SEED,SMALL_TEST_SIZE, MAX_HEIGHT, VARIANCE, INIT_VALUE);
         }
 
 
-        [TestCase(20, 20, 20, 20),
-        TestCase(30, 20, 49, 30),
-        TestCase(50, 15, 25, 40),
-        TestCase(15, 30, 9, 15),
-        TestCase(-5, -1, -10, -5),
-        TestCase(-15, -20, -9, -15),
-        TestCase(10, 20, 30, 22.5),
-        TestCase(10, 39, 20, 24.75),
-        TestCase(-10, -20, -40, -25),
-        TestCase(-50, -20, -20, -40)]
-        public void CalcValueTest(int randomNumber, int v1, int v2, decimal expected)
+        [TestCase(10, 20, 5 , 10),
+         TestCase(10,-10, 5, -5),
+         TestCase(20,22,10, 21),
+         TestCase(-22,-24, 10, -23),
+         TestCase(50,50,20, 50),
+         TestCase(-50, -50, 0, -50)]
+        public void CalcNormalizedPos_Tests(int v1, int v2, decimal randomNumber, decimal expected)
         {
-            var gen = new TopoGeneratorMoq(KNOWN_SEED, 200, 50, 10);
+            var gen = new TopoGeneratorMoq(KNOWN_SEED, 1, 50, 10);
             gen.GivenNextRandNumberIs(randomNumber);
-            var value = gen.CalcValue(v1, v2);
+            var value = gen.CalcNormalizedPos(v1, v2);
+
+            Assert.That(value == expected, $"with rand value ={randomNumber} expected {expected} but is {value}");
+        }
+
+        [TestCase(10, 4, -6),
+         TestCase(50, 50, 0),
+         TestCase(10, 18, 8)]
+        public void GetRandomHeightTest(int height, int randomNumber, decimal expected)
+        {
+            var gen = new TopoGeneratorMoq(KNOWN_SEED, 1, height, 1);
+            gen.GivenNextRandNumberIs(randomNumber);
+            var value = gen.GetRandomHeight();
 
             Assert.That(value == expected, $"{randomNumber} should be changed to {expected} but is {value}");
+        }
+
+
+        [TestCase(100, 49, 51, 50),
+        TestCase(100, 20, 30, 50)]
+        public void CalcValueTest(decimal random, int v1, int v2, decimal expected)
+        {
+            //these tests are questionable it is making sure that the coverage is there
+            //but we wind up using the same random number in both cases so it's brittle.
+            //might need to rework a little later.
+            var gen = new TopoGeneratorMoq(KNOWN_SEED, 1, 50, 1);
+            gen.GivenNextRandNumberIs(random);
+
+            var value = gen.CalcValue(v1, v2);
+            Assert.That(value == expected, $"Expected {expected} but is {value}");
         }
 
         [Test]

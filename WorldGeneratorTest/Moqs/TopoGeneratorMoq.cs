@@ -10,7 +10,7 @@ internal class TopoGeneratorMoq : TopographicalGenerator
 
     public void GivenNextRandNumberIs(decimal value) => _nextRandomNumber = value;
 
-    protected override decimal CalcValue()
+    protected override decimal GetNextRand(int max)
     {
         return _nextRandomNumber;
     }

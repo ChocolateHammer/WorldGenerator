@@ -37,34 +37,51 @@ namespace WorldGenerator.Generators
         /// <returns></returns>
         internal decimal CalcValue(decimal v1, decimal v2)
         {
-            decimal baseValue = CalcValue();
-            System.Diagnostics.Debug.Assert(baseValue <= MaxHeight + Deviation);
+            decimal baseValue = GetRandomHeight();
             //bend it back in range somewhat
             if ( (baseValue >= v1 && baseValue <= v2 ) ||
-                  (baseValue >= v2 && baseValue <= v1) )
+                (baseValue >= v2 && baseValue <= v1) )
             {
+                //if base value is in the domain [v1,.... baseValue, .... v2] no need to tweak it.
                 return baseValue;
             }
-            else if( baseValue > v1 && baseValue >v2)
+            else 
             {
-                if (baseValue > 0)
-                    return baseValue - ((v1 + v2) / 4);
-                else
-                    return baseValue + ((v1 + v2) / 4);
-            }
-            else
-            {
-                if (baseValue > 0)
-                    return baseValue + ((v1 + v2) / 4);
-                else
-                    return baseValue - ((v1 + v2) / 4);
+                return CalcNormalizedPos(v1, v2);
             }
         }
 
 
-        virtual protected decimal CalcValue() => _rand.Next( MaxHeight * 2) - MaxHeight + (_rand.Next(Deviation*2)-Deviation);
-        
+        /// <summary>
+        /// Get a randomized point somewhere +|- a deviation from the mid point of [v1,v2]
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        internal decimal CalcNormalizedPos( decimal v1, decimal v2)
+        {
+            var mid = (v1 + v2) / 2;
+            mid += GetNextRand(Deviation * 2) - Deviation;
+            if (mid > MaxHeight)
+            {
+                return MaxHeight;
+            }
+            else if( mid <-MaxHeight)
+            {
+                return -MaxHeight;
+            }
+            return mid;
+        }
 
+        internal decimal GetRandomHeight() => GetNextRand(MaxHeight * 2) - MaxHeight;
+
+        /// <summary>
+        /// Need to move the rand to a function that can be overloaded for tests.
+        /// </summary>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        virtual protected  decimal GetNextRand(int max) => _rand.Next(max);
+        
         private void GenerateLine( int startY, int genY, int endY)
         {
             foreach( int xPos in Layer.GetBinaryEnumerator())
@@ -80,7 +97,7 @@ namespace WorldGenerator.Generators
         {
             foreach (int xPos in Layer.GetBinaryEnumerator())
             {
-                Layer.SetValueAt(new Point(xPos, yPos), CalcValue());
+                Layer.SetValueAt(new Point(xPos, yPos), GetRandomHeight());
             }
         }
 
@@ -104,7 +121,6 @@ namespace WorldGenerator.Generators
                     lastYPos = yPos;
                 }
             }
-  
         }
 
         public TopographicalLayer Generate()

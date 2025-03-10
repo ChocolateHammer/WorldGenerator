@@ -4,8 +4,9 @@ namespace WorldGeneratorTest
 {
     class WorldLayerTests
     {
+        const int SMALL_TEST_SIZE = 50;
 
-        WorldLayer<int> CreateLayer(string name = "test", int size = IngoreSizeTopoMatrix.SMALL_TEST_SIZE)
+        WorldLayer<int> CreateLayer(string name = "test", int size = SMALL_TEST_SIZE)
         {
             return new WorldLayer<int>(name, size);
         }
@@ -14,7 +15,7 @@ namespace WorldGeneratorTest
         public void ArrayCorrectlySized()
         {
             WorldLayer<int> layer = CreateLayer();
-            Assert.That(layer.Matrix.GetUpperBound(0) == IngoreSizeTopoMatrix.SMALL_TEST_SIZE - 1);
+            Assert.That(layer.Matrix.GetUpperBound(0) == SMALL_TEST_SIZE - 1);
         }
 
         [TestCase(""),
@@ -24,19 +25,11 @@ namespace WorldGeneratorTest
             Assert.Throws<InvalidLayerSetupException>(() => CreateLayer(name));
         }
 
-        [TestCase(0),
-        TestCase(5),
-        TestCase(-1)]
-        public void InvalidSizeThrowsException(int matrixSize)
-        {
-            Assert.Throws<InvalidLayerSetupException>(() => CreateLayer("test", matrixSize));
-        }
-
         [Test]
         public void ClearToWorks()
         {
             int clearToValue = -666;
-            int matrixSize = IngoreSizeTopoMatrix.SMALL_TEST_SIZE;
+            int matrixSize = SMALL_TEST_SIZE;
             WorldLayer<int> layer = new WorldLayer<int>("test", matrixSize);
             Assert.That(layer.Matrix[0, 0] == 0);
             Assert.That(layer.Matrix[matrixSize - 1, matrixSize - 1] == 0);
@@ -48,7 +41,7 @@ namespace WorldGeneratorTest
         [Test]
         public void FindLargestWorks()
         {
-            int matrixSize = IngoreSizeTopoMatrix.SMALL_TEST_SIZE;
+            int matrixSize = SMALL_TEST_SIZE;
             WorldLayer<int> layer = new WorldLayer<int>("test", matrixSize, -1);
             int testValue = 10;
             Assert.That(layer.FindLargest() == -1, "check initialized correctly");
@@ -66,7 +59,7 @@ namespace WorldGeneratorTest
         [Test]
         public void FindSmallestWorks()
         {
-            int matrixSize = IngoreSizeTopoMatrix.SMALL_TEST_SIZE;
+            int matrixSize = SMALL_TEST_SIZE;
             WorldLayer<int> layer = new WorldLayer<int>("test", matrixSize, 500);
             Assert.That(layer.FindSmallest() == 500, "check initialized correctly");
 
@@ -97,7 +90,7 @@ namespace WorldGeneratorTest
         TestCase(-201, 9)]
         public void TestMatrixWrap(int x, int expected)
         {
-            var layer = new IngoreSizeMatrix<int>("test", 10);
+            var layer = new WorldLayer<int>("test", 10);
             var res = layer.ConvertToActualIndex(x);
             Assert.That(res == expected, $"{res} == {expected}");
         }
@@ -108,7 +101,7 @@ namespace WorldGeneratorTest
          TestCase(50)]
         public void TestBinaryIterator(int arraySize)
         {
-            var layer = new IngoreSizeMatrix<int>("test", arraySize);
+            var layer = new WorldLayer<int>("test", arraySize);
             List<int> items = [.. layer.GetBinaryEnumerator()];
             Assert.That(items.Count == layer.Size, "Wrong number of items in iterator");
             Assert.That(items[0] == arraySize / 2, "Doesn't start at the right point");

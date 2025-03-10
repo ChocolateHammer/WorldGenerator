@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Reflection.Metadata.Ecma335;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace WorldGenerator.WorldLayers
 {
@@ -18,7 +10,10 @@ namespace WorldGenerator.WorldLayers
     public class WorldLayer<T> where T: IComparable
     {
 
-        public virtual int GetMinViableSize() => 500;
+        /// It makes sense to have a function to enforce the layers are 
+        /// of a minimum viable size but it's made the TDD harder than I think
+        /// justifies it's existence when a small one will just generate a garbage world 
+        /// and the UI will restrict it in any case the function public virtual int GetMinViableSize() => 500 has been removed for that reason
 
         public WorldLayer(string name, int size, T initialValue)
         {
@@ -41,8 +36,6 @@ namespace WorldGenerator.WorldLayers
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new InvalidLayerSetupException("Invalid world layer Name");
-            if (size < GetMinViableSize())
-                throw new InvalidLayerSetupException("Invalid world layer size");
         }
 
         /// <summary>
