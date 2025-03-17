@@ -6,7 +6,7 @@ namespace WorldGeneratorTest
     {
         const int SMALL_TEST_SIZE = 50;
 
-        WorldLayer<int> CreateLayer(string name = "test", int size = SMALL_TEST_SIZE)
+        WorldLayer<int> CreateLayer(string name = "test", uint size = SMALL_TEST_SIZE)
         {
             return new WorldLayer<int>(name, size);
         }
@@ -29,7 +29,7 @@ namespace WorldGeneratorTest
         public void ClearToWorks()
         {
             int clearToValue = -666;
-            int matrixSize = SMALL_TEST_SIZE;
+            uint matrixSize = SMALL_TEST_SIZE;
             WorldLayer<int> layer = new WorldLayer<int>("test", matrixSize);
             Assert.That(layer.Matrix[0, 0] == 0);
             Assert.That(layer.Matrix[matrixSize - 1, matrixSize - 1] == 0);
@@ -41,7 +41,7 @@ namespace WorldGeneratorTest
         [Test]
         public void FindLargestWorks()
         {
-            int matrixSize = SMALL_TEST_SIZE;
+            uint matrixSize = SMALL_TEST_SIZE;
             WorldLayer<int> layer = new WorldLayer<int>("test", matrixSize, -1);
             int testValue = 10;
             Assert.That(layer.FindLargest() == -1, "check initialized correctly");
@@ -59,7 +59,7 @@ namespace WorldGeneratorTest
         [Test]
         public void FindSmallestWorks()
         {
-            int matrixSize = SMALL_TEST_SIZE;
+            uint matrixSize = SMALL_TEST_SIZE;
             WorldLayer<int> layer = new WorldLayer<int>("test", matrixSize, 500);
             Assert.That(layer.FindSmallest() == 500, "check initialized correctly");
 
@@ -96,16 +96,16 @@ namespace WorldGeneratorTest
         }
         //0123456789012345678901234567890123456789--just some number to be able to validate the testcases are setup correctly.
 
-        [TestCase(10),
-         TestCase(23),
-         TestCase(50)]
-        public void TestBinaryIterator(int arraySize)
+        [TestCase(10U),
+         TestCase(23U),
+         TestCase(50U)]
+        public void TestBinaryIterator(uint arraySize)
         {
             var layer = new WorldLayer<int>("test", arraySize);
-            List<int> items = [.. layer.GetBinaryEnumerator()];
+            List<uint> items = [.. layer.GetBinaryEnumerator()];
             Assert.That(items.Count == layer.Size, "Wrong number of items in iterator");
             Assert.That(items[0] == arraySize / 2, "Doesn't start at the right point");
-            for( int i = 0; i < arraySize; i ++)
+            for( uint i = 0; i < arraySize; i ++)
             {
                 Assert.That(items.Contains(i), $"Missing expected value {i}");
             }

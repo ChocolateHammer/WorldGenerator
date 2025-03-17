@@ -9,7 +9,7 @@ namespace WorldGenerator.WorldLayers
 {
     public class TectonicLayer : WorldLayer<TetonicVector>
     {
-        public TectonicLayer(string name, int size, TetonicVector initialValue) : base("Tectonic", size, initialValue)
+        public TectonicLayer(string name, uint size, TetonicVector initialValue) : base("Tectonic", size, initialValue)
         {
 
         }

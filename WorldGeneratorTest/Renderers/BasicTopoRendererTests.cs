@@ -1,17 +1,13 @@
-﻿using WorldGenerator.Renderers;
+﻿using WorldGenerator.Generators;
+using WorldGenerator.Renderers;
 using WorldGenerator.WorldLayers;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace WorldGeneratorTest.Renderers
 {
     [TestFixture]
     public class BasicTopoRendererTests
     {
-        BasicTopoRenderer _render;
-        [SetUp]
-        public void Setup()
-        {
-            _render = new BasicTopoRenderer();
-        }
 
         [TestCase(-40),
             TestCase(0),
@@ -27,11 +23,38 @@ namespace WorldGeneratorTest.Renderers
             //given a matrix with a given value 
             var matrix = new TopographicalLayer(10);
 
+            var renderer = new BasicTopoRenderer(matrix);
+
             matrix.ClearTo(setTo);
             //renders and image
-            var image = _render.Render();
-            //that is wholely that value
-            Assert.That(false, "image[x,y]=expected color");
+            var image = renderer.Render();
+            var pixels = image.GetPixelsUnsafe();
+            var baseColor = pixels.GetPixel(0,0);
+            foreach (var color in pixels)
+            {
+                Assert.That(color.Equals(baseColor), "unexpected color found");
+            }
+
+
+            //image.Write(@"C:\temp\Test.jpg");
+            ////that is wholely that value
+            //Assert.That(false, "image[x,y]=expected color");
+
+
+        }
+
+        [Test]
+        public void TestBigMatrix()
+        {
+
+            var gen = new TopographicalGenerator(12312, 2000, 200, 20);
+            var matrix = gen.Generate();
+
+            var renderer = new BasicTopoRenderer(matrix);
+            var image = renderer.Render();
+            image.Write(@"C:\temp\Test.jpg");
+
+            //not actually a test[yet] wanted to be able to see what the topolayer looks like ... right now I need to tweak it it's not smooth yet.
 
 
         }

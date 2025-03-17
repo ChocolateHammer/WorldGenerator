@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using ImageMagick;
+using System.Drawing;
 
 namespace WorldGenerator.WorldLayers
 {
@@ -15,7 +16,7 @@ namespace WorldGenerator.WorldLayers
         /// justifies it's existence when a small one will just generate a garbage world 
         /// and the UI will restrict it in any case the function public virtual int GetMinViableSize() => 500 has been removed for that reason
 
-        public WorldLayer(string name, int size, T initialValue)
+        public WorldLayer(string name, uint size, T initialValue)
         {
             ValidateParams(name, size);
             Name = name;
@@ -24,7 +25,7 @@ namespace WorldGenerator.WorldLayers
             ClearTo(initialValue);
         }
 
-        public WorldLayer(string name, int size)
+        public WorldLayer(string name, uint size)
         {
             ValidateParams(name, size);
             Name = name;
@@ -32,7 +33,7 @@ namespace WorldGenerator.WorldLayers
             Matrix = new T[size, size];
         }
 
-        public void ValidateParams(string name, int size)
+        public void ValidateParams(string name, uint size)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new InvalidLayerSetupException("Invalid world layer Name");
@@ -119,25 +120,25 @@ namespace WorldGenerator.WorldLayers
         public Point ConvertWrappedIndexToActualIndex(Point p)
         {
             //if the index is grater than size get the offset that is left
-            int realx = ConvertToActualIndex(p.X);
-            int realy = ConvertToActualIndex(p.Y);
+            int realx = (int)ConvertToActualIndex(p.X);
+            int realy = (int)ConvertToActualIndex(p.Y);
 
             return new Point(realx, realy);
         }
 
-        public int ConvertToActualIndex(int v)
+        public uint ConvertToActualIndex(int v)
         { 
             //if it's in legal ranges just return it
-            if (v < Size && v >= 0) return v;
+            if (v < Size && v >= 0) return (uint)v;
             //I'd tried to do this in a cleaner way but it got funky with negative vars
             //come back and simply this later right now I just want it to work.
             if( v >= Size)
             {
-                return (v%Size);
+                return (uint)(v%Size);
             }
             else
             {
-                int value = Math.Abs(v) %( Size);
+                uint value = (uint)(Math.Abs(v) % Size);
                 if (value == 0)
                     return 0;
                 return Size-value;
@@ -146,8 +147,8 @@ namespace WorldGenerator.WorldLayers
 
         public void NormalizePoint( ref Point p)
         {
-            p.X = ConvertToActualIndex(p.X);
-            p.Y = ConvertToActualIndex(p.Y);
+            p.X =(int) ConvertToActualIndex(p.X);
+            p.Y = (int)ConvertToActualIndex(p.Y);
         }
 
         public Point CalcMidPoint( Point startingPoint, Point endingPoint)
@@ -161,9 +162,9 @@ namespace WorldGenerator.WorldLayers
         }
 
 
-        public IEnumerable<int> GetBinaryEnumerator()
+        public IEnumerable<uint> GetBinaryEnumerator()
         {
-            var values = new List<int>();
+            var values = new List<uint>();
 
             RecurseBinaryWalk(0, Size , values);
 
@@ -179,11 +180,11 @@ namespace WorldGenerator.WorldLayers
         /// <param name="start"></param>
         /// <param name="end"></param>
         /// <param name="items"></param>
-        private void RecurseBinaryWalk( int start, int end, List<int> items )
+        private void RecurseBinaryWalk( uint start, uint end, List<uint> items )
         {
             if (start != end)
             {
-                var next = (start + end) / 2;
+                uint next = (start + end) / 2;
                 if (next != start 
                     || (next == 0 && !items.Contains(0)) )
                 {
@@ -207,7 +208,7 @@ namespace WorldGenerator.WorldLayers
         /// <summary>
         /// The size of the matrix
         /// </summary>
-        public int Size { get; }
+        public uint Size { get; }
   
     }
 }
