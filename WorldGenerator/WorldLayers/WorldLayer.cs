@@ -1,5 +1,7 @@
 ﻿using ImageMagick;
 using System.Drawing;
+using System.Runtime.InteropServices.Marshalling;
+using System.Text;
 
 namespace WorldGenerator.WorldLayers
 {
@@ -129,10 +131,10 @@ namespace WorldGenerator.WorldLayers
         public uint ConvertToActualIndex(int v)
         { 
             //if it's in legal ranges just return it
-            if (v < Size && v >= 0) return (uint)v;
+            if (v < Size-1 && v >= 0) return (uint)v;
             //I'd tried to do this in a cleaner way but it got funky with negative vars
             //come back and simply this later right now I just want it to work.
-            if( v >= Size)
+            if( v >= Size-1)
             {
                 return (uint)(v%Size);
             }
@@ -161,9 +163,47 @@ namespace WorldGenerator.WorldLayers
             return new Point(midX, midY);
         }
 
+        public IEnumerable<Tuple<uint, uint, uint>>  GetBinaryTupleEnumerator()
+        {
+            var values = new List<Tuple<uint, uint, uint>>();
+
+            RecurseBinaryWalkTuples(0, Size-1, false, values);
+
+            foreach (var v in values)
+                yield return v;
+        }
+
+        private void RecurseBinaryWalkTuples(uint start, uint end, bool addTuple, List<Tuple<uint, uint, uint>> items)
+        {
+            if (start != end)
+            {
+
+                //0,9 ->skip
+                //[0,5 ; 0,3; 0,2; 0,1] [2,4; 3;4][4,9;6,9;7,9;8;9]
+                uint next = (start + end +1) / 2;
+                if (next != start)
+                {
+                    if(addTuple)
+                    {
+                        items.Add(new Tuple<uint, uint, uint>(start, next, end));
+                    }
+                    if (start + 1 != end)
+                    {
+                        RecurseBinaryWalkTuples(start, next, true, items);
+                        RecurseBinaryWalkTuples(next, end, true, items);
+                    }
+                }
+            }
+        }
 
         public IEnumerable<uint> GetBinaryEnumerator()
         {
+            ///what I'm getting now for a 10x10 matrix is 
+            //[5,2,1,0,3, 4,7,6,8,9]  what i think I need for this to work is
+            //[9,5,0, ....... hmmmmm,,,,,   what do i neeed here.....  tuples i think....
+            //like[{0,5},{2,5},{1,2}.[0.1}... no....
+            //the pint is to get a smooth transiztion...
+            //{0,5},{5.9},{
             var values = new List<uint>();
 
             RecurseBinaryWalk(0, Size , values);
@@ -209,6 +249,23 @@ namespace WorldGenerator.WorldLayers
         /// The size of the matrix
         /// </summary>
         public uint Size { get; }
-  
+
+        public override string ToString()
+        {
+            StringBuilder builder = new StringBuilder((int)Size * 50);
+            builder.Append("{");
+            for (int y = 0; y < Size; y++)
+            {
+                builder.Append("[");
+                for (int x = 0; x < Size; x++)
+                {
+                    builder.Append($"{GetValueAt(new Point(x, y)).ToString()},");
+                }
+                builder.Append($"],{Environment.NewLine}");
+            }
+            builder.Append("}");
+            return builder.ToString();
+        }
+
     }
 }

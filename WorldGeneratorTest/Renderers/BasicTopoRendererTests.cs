@@ -1,7 +1,6 @@
 ﻿using WorldGenerator.Generators;
 using WorldGenerator.Renderers;
 using WorldGenerator.WorldLayers;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace WorldGeneratorTest.Renderers
 {
@@ -27,32 +26,25 @@ namespace WorldGeneratorTest.Renderers
 
             matrix.ClearTo(setTo);
             //renders and image
-            var image = renderer.Render();
+            var image = renderer.RenderHist();
             var pixels = image.GetPixelsUnsafe();
-            var baseColor = pixels.GetPixel(0,0);
+            var baseColor = pixels.GetPixel(0, 0);
             foreach (var color in pixels)
             {
                 Assert.That(color.Equals(baseColor), "unexpected color found");
             }
-
-
-            //image.Write(@"C:\temp\Test.jpg");
-            ////that is wholely that value
-            //Assert.That(false, "image[x,y]=expected color");
-
-
         }
 
         [Test]
         public void TestBigMatrix()
         {
 
-            var gen = new TopographicalGenerator(12312, 2000, 200, 20);
+            var gen = new TopographicalGenerator(77, 2000, 200, 100);
             var matrix = gen.Generate();
 
             var renderer = new BasicTopoRenderer(matrix);
             var image = renderer.Render();
-            image.Write(@"C:\temp\Test.jpg");
+            image.Write(@"C:\temp\TopographicalGenerator.jpg");
 
             //not actually a test[yet] wanted to be able to see what the topolayer looks like ... right now I need to tweak it it's not smooth yet.
 
@@ -60,5 +52,40 @@ namespace WorldGeneratorTest.Renderers
         }
 
 
+        [Test]
+        public void TestNewGen()
+        {
+            var gen = new TopoGenerator2(772211, 2000, 500, 20);
+            var matrix = gen.Generate();
+
+            var renderer = new BasicTopoRenderer(matrix);
+            var image = renderer.Render();
+            image.Write(@"C:\temp\TopoGenerator2.jpg");
+
+        }
+
+
+        [Test]
+        public void TestNewGen2()
+        { 
+            var gen = new TopoGenerator3(812844, 2000, 500, 20, -999);
+            var matrix = gen.Generate();
+
+            var renderer = new BasicTopoRenderer(matrix);
+            var image = renderer.Render();
+            image.Write(@"C:\temp\TopoGenerator3.jpg");
+
+        }
+
+        [Test]
+        public void TestNewGenSin()
+        {
+            var gen = new TopoGeneratorSin(1237, 1000, 500, 100, -999);
+            var matrix = gen.GenerateSimpleSign();
+
+            var renderer = new BasicTopoRenderer(matrix);
+            var image = renderer.Render();
+            image.Write(@"C:\temp\TopoGeneratorSin.jpg");
+        }
     }
 }

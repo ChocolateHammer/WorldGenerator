@@ -22,8 +22,8 @@ namespace WorldGeneratorTest.Generators
         }
 
 
-        [TestCase(10, 20, 5 , 10),
-         TestCase(10,-10, 5, -5),
+        [TestCase(10, 20, 5 , 12.5),
+         TestCase(10,-10, 5, -2.5),
          TestCase(20,22,10, 21),
          TestCase(-22,-24, 10, -23),
          TestCase(50,50,20, 50),
@@ -69,7 +69,7 @@ namespace WorldGeneratorTest.Generators
         {
             int yPosLine = 10;
 
-            _generator.GenerateIndependentLine(yPosLine); // just generate a line at 10
+            _generator.GenerateIndependentLineIfNeeded(yPosLine); // just generate a line at 10
 
             for (int xPos = 0; xPos < _generator.WorldSize; xPos++)
             {
@@ -99,8 +99,6 @@ namespace WorldGeneratorTest.Generators
             Assert.That(largestValue <= MAX_HEIGHT + VARIANCE, $"value {largestValue} out of legal range");
             Assert.That(smallestValue >= -(MAX_HEIGHT + VARIANCE), $"value {largestValue} out of legal range");
         }
-
-
 
     }
 }

@@ -110,6 +110,31 @@ namespace WorldGeneratorTest
                 Assert.That(items.Contains(i), $"Missing expected value {i}");
             }
         }
+
+        [TestCase(10U),
+        TestCase(23U),
+        TestCase(50U),
+        TestCase(1000U)]
+        public void TestBinaryIteratorTuple(uint arraySize)
+        {
+            var layer = new WorldLayer<int>("test", arraySize);
+            var items = layer.GetBinaryTupleEnumerator().ToList();
+            var abscissa = new HashSet<uint>();
+            var ordinate = new HashSet<uint>();
+            foreach( var tuple in items )
+            {
+                abscissa.Add(tuple.Item1);
+                ordinate.Add(tuple.Item3);
+            }
+            //there should be 0 -8 in the abscissa and 1-9 in the ordinate.   Don't need to check every number these
+            //counts should be enough to show the coverage is good.
+            Assert.That(abscissa.Count == arraySize-1, $"Expected {arraySize - 1} items but found {abscissa.Count}");
+            Assert.That(ordinate.Count == arraySize - 1, $"Expected {arraySize - 1} items but found {ordinate.Count}");
+            //not going to attempt to walk the arrays lets just spot check the first and last elements.
+            Assert.That(items[0].Item1 == 0 && items[0].Item3 == arraySize / 2, "First element isn't what was expected");
+            Assert.That(items.Last().Item1 == arraySize - 2 && items.Last().Item3 == arraySize - 1, "Last element isn't what was expected");
+
+        }
     }
 
 }
