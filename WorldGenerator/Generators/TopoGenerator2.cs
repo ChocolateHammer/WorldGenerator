@@ -166,10 +166,10 @@ namespace WorldGenerator.Generators
                     {
                         for (int yPos = 0; yPos <= yOffset; yPos++)
                         {
-                            Layer.SetValueOffsetAt(new Point(x + xPos, y + yPos), h + GetRandomDeviation());
-                            Layer.SetValueOffsetAt(new Point(x - xPos, y + yPos), h + GetRandomDeviation());
-                            Layer.SetValueOffsetAt(new Point(x + xPos, y - yPos), h + GetRandomDeviation());
-                            Layer.SetValueOffsetAt(new Point(x - xPos, y - yPos), h + GetRandomDeviation());
+                            Layer.ApplyOffset(new Point(x + xPos, y + yPos), h + GetRandomDeviation());
+                            Layer.ApplyOffset(new Point(x - xPos, y + yPos), h + GetRandomDeviation());
+                            Layer.ApplyOffset(new Point(x + xPos, y - yPos), h + GetRandomDeviation());
+                            Layer.ApplyOffset(new Point(x - xPos, y - yPos), h + GetRandomDeviation());
                             //Layer.SetValueAt(new System.Drawing.Point(x + xPos, y + yPos), h+ GetNextRand(Deviation * 2) - Deviation);
                             //Layer.SetValueAt(new System.Drawing.Point(x - xPos, y + yPos), h+ GetNextRand(Deviation * 2) - Deviation);
                             //Layer.SetValueAt(new System.Drawing.Point(x + xPos, y - yPos), h+ GetNextRand(Deviation * 2) - Deviation);

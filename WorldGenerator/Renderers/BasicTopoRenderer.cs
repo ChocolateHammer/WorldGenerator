@@ -106,8 +106,8 @@ namespace WorldGenerator.Renderers
                 r = (byte)(normalizeValue / 3);
             }
             //byte r = (normalizeValue > MaxHeight / 5) ? (byte)(normalizeValue *3/5) : (byte)0; //only turn on the red when we are half way to max height
-            byte g = (normalizeValue <= 0) ? (byte)0:(byte)Math.Min(255,normalizeValue+50);
-            byte b = (normalizeValue < -50) ? (byte)255 : (byte)(255 - g); 
+            byte g = (normalizeValue <= 0) ? (byte)0:(byte)Math.Min(255,normalizeValue);
+            byte b = (normalizeValue <= 0) ? (byte)255 : (byte)((g) *3/4); 
             return new ReadOnlySpan<byte>(new byte[] { r,g,b});
         }
 

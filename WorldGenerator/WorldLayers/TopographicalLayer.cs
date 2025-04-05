@@ -12,14 +12,14 @@ namespace WorldGenerator.WorldLayers
         {
         }
 
-        public void SetValueOffsetAt(Point p, decimal offset)
+        public void ApplyOffset(Point p, decimal offset)
         {
             var realCord = ConvertWrappedIndexToActualIndex(p);
             var value = GetValueAt(p);
             Matrix[realCord.X, realCord.Y] = value + offset;
         }
 
-        public void SetValueAveAt(Point p, decimal newValue)
+        public void SetValueToAverage(Point p, decimal newValue)
         {
             var realCord = ConvertWrappedIndexToActualIndex(p);
             var value = GetValueAt(p);
