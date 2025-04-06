@@ -11,7 +11,7 @@ namespace WorldGenerator.Generators
 
         public decimal DefaultValue { get; }
 
-        public TopoGenerator3(int seed, uint worldSize, int maxHeight, int deviation, decimal defaultValue) : base(seed, worldSize, maxHeight, deviation)
+        public TopoGenerator3(int seed, int worldSize, int maxHeight, int deviation, decimal defaultValue) : base(seed, worldSize, maxHeight, deviation)
         {
             //The map is meant to be seamless meaning if you wrapped it then the edges line
             //up with the far edge.  This algorithm should ensure that by starting at the edges

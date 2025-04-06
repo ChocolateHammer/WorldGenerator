@@ -6,7 +6,7 @@ namespace WorldGeneratorTest
     {
         const int SMALL_TEST_SIZE = 50;
 
-        WorldLayer<int> CreateLayer(string name = "test", uint size = SMALL_TEST_SIZE)
+        WorldLayer<int> CreateLayer(string name = "test", int size = SMALL_TEST_SIZE)
         {
             return new WorldLayer<int>(name, size);
         }
@@ -29,7 +29,7 @@ namespace WorldGeneratorTest
         public void ClearToWorks()
         {
             int clearToValue = -666;
-            uint matrixSize = SMALL_TEST_SIZE;
+            int matrixSize = SMALL_TEST_SIZE;
             WorldLayer<int> layer = new WorldLayer<int>("test", matrixSize);
             Assert.That(layer.Matrix[0, 0] == 0);
             Assert.That(layer.Matrix[matrixSize - 1, matrixSize - 1] == 0);
@@ -41,7 +41,7 @@ namespace WorldGeneratorTest
         [Test]
         public void FindLargestWorks()
         {
-            uint matrixSize = SMALL_TEST_SIZE;
+            int matrixSize = SMALL_TEST_SIZE;
             WorldLayer<int> layer = new WorldLayer<int>("test", matrixSize, -1);
             int testValue = 10;
             Assert.That(layer.FindLargest() == -1, "check initialized correctly");
@@ -59,7 +59,7 @@ namespace WorldGeneratorTest
         [Test]
         public void FindSmallestWorks()
         {
-            uint matrixSize = SMALL_TEST_SIZE;
+            int matrixSize = SMALL_TEST_SIZE;
             WorldLayer<int> layer = new WorldLayer<int>("test", matrixSize, 500);
             Assert.That(layer.FindSmallest() == 500, "check initialized correctly");
 
@@ -96,10 +96,10 @@ namespace WorldGeneratorTest
         }
         //0123456789012345678901234567890123456789--just some number to be able to validate the testcases are setup correctly.
 
-        [TestCase(10U),
-         TestCase(23U),
-         TestCase(50U)]
-        public void TestBinaryIterator(uint arraySize)
+        [TestCase(10),
+         TestCase(23),
+         TestCase(50)]
+        public void TestBinaryIterator(int arraySize)
         {
             var layer = new WorldLayer<int>("test", arraySize);
             List<uint> items = [.. layer.GetBinaryEnumerator()];
@@ -111,11 +111,11 @@ namespace WorldGeneratorTest
             }
         }
 
-        [TestCase(10U),
-        TestCase(23U),
-        TestCase(50U),
-        TestCase(1000U)]
-        public void TestBinaryIteratorTuple(uint arraySize)
+        [TestCase(10),
+        TestCase(23),
+        TestCase(50),
+        TestCase(1000)]
+        public void TestBinaryIteratorTuple(int arraySize)
         {
             var layer = new WorldLayer<int>("test", arraySize);
             var items = layer.GetBinaryTupleEnumerator().ToList();

@@ -18,24 +18,25 @@ namespace WorldGenerator.WorldLayers
         /// justifies it's existence when a small one will just generate a garbage world 
         /// and the UI will restrict it in any case the function public virtual int GetMinViableSize() => 500 has been removed for that reason
 
-        public WorldLayer(string name, uint size, T initialValue)
+        public WorldLayer(string name, int size, T initialValue)
         {
-            ValidateParams(name, size);
+            ValidateParams(name);
             Name = name;
             Size = size;
+            InitialValue = initialValue;
             Matrix = new T[size, size];
             ClearTo(initialValue);
         }
 
-        public WorldLayer(string name, uint size)
+        public WorldLayer(string name, int size)
         {
-            ValidateParams(name, size);
+            ValidateParams(name);
             Name = name;
             Size = size;
             Matrix = new T[size, size];
         }
 
-        public void ValidateParams(string name, uint size)
+        public void ValidateParams(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new InvalidLayerSetupException("Invalid world layer Name");
@@ -143,7 +144,7 @@ namespace WorldGenerator.WorldLayers
                 uint value = (uint)(Math.Abs(v) % Size);
                 if (value == 0)
                     return 0;
-                return Size-value;
+                return (uint)(Size - value);
             }
         }
 
@@ -167,7 +168,7 @@ namespace WorldGenerator.WorldLayers
         {
             var values = new List<Tuple<uint, uint, uint>>();
 
-            RecurseBinaryWalkTuples(0, Size-1, false, values);
+            RecurseBinaryWalkTuples(0, (uint)(Size - 1), false, values);
 
             foreach (var v in values)
                 yield return v;
@@ -206,7 +207,7 @@ namespace WorldGenerator.WorldLayers
             //{0,5},{5.9},{
             var values = new List<uint>();
 
-            RecurseBinaryWalk(0, Size , values);
+            RecurseBinaryWalk(0, (uint)Size, values);
 
             foreach (var v in values)
                 yield return v;
@@ -248,11 +249,12 @@ namespace WorldGenerator.WorldLayers
         /// <summary>
         /// The size of the matrix
         /// </summary>
-        public uint Size { get; }
+        public int Size { get; }
+        public T InitialValue { get; }
 
         public override string ToString()
         {
-            StringBuilder builder = new StringBuilder((int)Size * 50);
+            StringBuilder builder = new StringBuilder(Size * 50);
             builder.Append("{");
             for (int y = 0; y < Size; y++)
             {

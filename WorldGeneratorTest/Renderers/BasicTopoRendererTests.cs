@@ -80,8 +80,8 @@ namespace WorldGeneratorTest.Renderers
         [Test]
         public void TestNewGenSin()
         {
-            var gen = new TopoGeneratorSin(1237, 1000, 500, 100, -999);
-            var matrix = gen.GenerateSimpleSign();
+            var gen = new TopoGeneratorSin(1237, 2000, 500, 100, -999);
+            var matrix = gen.Generate();
 
             var renderer = new BasicTopoRenderer(matrix);
             var image = renderer.Render();

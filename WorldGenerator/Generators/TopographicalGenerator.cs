@@ -11,7 +11,7 @@ namespace WorldGenerator.Generators
         private readonly TopographicalLayer _layer;
         private readonly List<int> _rowsDone = new List<int>();
 
-        public TopographicalGenerator(int seed, uint worldSize, int maxHeight, int deviation, decimal defaultValue = -1) : base(seed, worldSize, maxHeight, deviation)
+        public TopographicalGenerator(int seed, int worldSize, int maxHeight, int deviation, decimal defaultValue = -1) : base(seed, worldSize, maxHeight, deviation)
         {
             //The map is meant to be seamless meaning if you wrapped it then the edges line
             //up with the far edge.  This algorithm should ensure that by starting at the edges

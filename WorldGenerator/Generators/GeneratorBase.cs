@@ -13,7 +13,7 @@ namespace WorldGenerator.Generators
         /// <param name="worldSize"></param>
         /// <param name="maxHeight"></param>
         /// <param name="deviation"></param>
-        public GeneratorBase(int seed, uint worldSize, int maxHeight, int deviation)
+        public GeneratorBase(int seed, int worldSize, int maxHeight, int deviation)
         {
             Seed = seed;
             WorldSize = worldSize;
@@ -31,7 +31,7 @@ namespace WorldGenerator.Generators
         /// <summary>
         /// The size of the world being generated
         /// </summary>
-        public uint WorldSize { get; set; }
+        public int WorldSize { get; set; }
         /// <summary>
         /// Max hieght/depth of the world
         /// </summary>

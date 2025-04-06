@@ -15,7 +15,7 @@ namespace WorldGenerator.Generators
         private readonly TectonicLayer _layer;
         private readonly Random _rand;
 
-        public TectonicGenerator(int seed, uint worldSize, int deviation) : base(seed, worldSize, 100, deviation)
+        public TectonicGenerator(int seed, int worldSize, int deviation) : base(seed, worldSize, 100, deviation)
         {
             _layer = new TectonicLayer(worldSize);
             _rand = new Random(seed);

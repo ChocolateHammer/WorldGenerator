@@ -21,7 +21,7 @@ namespace WorldGenerator.WorldLayers
     /// It's my though that by doing this I'll wind up generating fault lines that do a reasonable job of approximating it.</remarks>
     public class TectonicLayer : WorldLayer<TectonicVector>
     {
-        public TectonicLayer(uint size) : base("Tectonic", size)
+        public TectonicLayer(int size) : base("Tectonic", size)
         {
 
         }

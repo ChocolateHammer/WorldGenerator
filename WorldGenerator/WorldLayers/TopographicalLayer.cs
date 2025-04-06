@@ -8,7 +8,7 @@ namespace WorldGenerator.WorldLayers
     public class TopographicalLayer : WorldLayer<decimal>
     {
 
-        public TopographicalLayer( uint size, decimal initialValue =0) : base("Topographical", size, initialValue)
+        public TopographicalLayer( int size, decimal initialValue =0) : base("Topographical", size, initialValue)
         {
         }
 
@@ -23,7 +23,10 @@ namespace WorldGenerator.WorldLayers
         {
             var realCord = ConvertWrappedIndexToActualIndex(p);
             var value = GetValueAt(p);
-            Matrix[realCord.X, realCord.Y] = (value + newValue) /2;
+            if (value == InitialValue)
+                SetValueAt(p, newValue);
+            else
+                Matrix[realCord.X, realCord.Y] = (value + newValue) /2;
         }
     }
 }
