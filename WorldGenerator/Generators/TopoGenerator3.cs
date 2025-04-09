@@ -134,7 +134,7 @@ namespace WorldGenerator.Generators
             GenerateIndependentLine((int)(WorldSize / 2));
         }
 
-        public TopographicalLayer Generate()
+        public override dynamic Generate()
         {
             var setMatrix = new byte[WorldSize, WorldSize];
 

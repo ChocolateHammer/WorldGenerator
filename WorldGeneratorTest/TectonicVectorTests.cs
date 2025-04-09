@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using System.Drawing;
 using WorldGenerator.WorldLayers;
 
 namespace WorldGeneratorTest
@@ -32,6 +33,25 @@ namespace WorldGeneratorTest
         {
             var vector = new TectonicVector(value, 10);
             Assert.That(vector.Direction == normalizedValue, $"A direction of {value} yields invalid {vector.Direction}");
+        }
+
+        [TestCase(10, -10, 20),
+         TestCase(1,1, 0),
+         TestCase(90, 0, 90),
+         TestCase( 370, -10, 20),
+         TestCase(0,360, 0),
+         TestCase( 10, 200, 170),
+         TestCase( 10, 300, 70),
+         TestCase( 200, 10, 190),
+         TestCase( 90,180,90),
+         TestCase( 1, 359, 2),
+         TestCase( 720, 10, 10)]
+        public void DifferenceInDirection_Test( double v1Dir, double v2Dir, double expectedValue)
+        {
+            var v1 = new TectonicVector(v1Dir, 1);
+            var v2 = new TectonicVector(v2Dir, 2);
+            var diff = v1.DifferenceInDirection(v2);
+            Assert.That(diff == expectedValue, $"{diff} != {expectedValue}");
         }
 
         [TestCase(0,0, "(D:0.00,F:0.00)"),
@@ -87,6 +107,30 @@ namespace WorldGeneratorTest
             Assert.That(v2.Force.Equals(expectedF), $"Ave of {f1}, {f2} == {v2.Force}");
             Assert.That(v2.Direction == expectedD, $"Ave of {f1}, {f2} == {v2.Direction} rather than{expectedD}");
 
+        }
+
+        [TestCase(0, 1, 0),
+         TestCase(1, 1, 0),
+         TestCase(22.4, 1,0),
+         TestCase(-22.4,1,0),
+         TestCase(22.5, 1, 0),
+         TestCase(-22.5, 1, 0),
+         TestCase(45, 1,-1),
+         TestCase(-45, 1, 1),
+         TestCase(89.9, 0, -1),
+         TestCase(90, 0,-1),
+         TestCase(-90, 0, 1),
+         TestCase(134.9, -1, -1),
+         TestCase(-134.9, -1, 1),
+         TestCase(135, -1, -1),
+         TestCase(-135, -1, 1),
+         TestCase(179.5, -1, 0),
+         TestCase(-179.5, -1, 0)]
+        public void DirectionFacingTests( double direction, int expectedx, int expectedy)
+        {
+            var v1 = new TectonicVector(direction, 1);
+            var p = v1.VectorIsFacing(new Point(0, 0));
+            Assert.That(p.X == expectedx && p.Y == expectedy);
         }
     }
 }

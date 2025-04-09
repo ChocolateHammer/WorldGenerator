@@ -102,10 +102,10 @@ namespace WorldGeneratorTest
         public void TestBinaryIterator(int arraySize)
         {
             var layer = new WorldLayer<int>("test", arraySize);
-            List<uint> items = [.. layer.GetBinaryEnumerator()];
+            List<int> items = [.. layer.GetBinaryEnumerator()];
             Assert.That(items.Count == layer.Size, "Wrong number of items in iterator");
             Assert.That(items[0] == arraySize / 2, "Doesn't start at the right point");
-            for( uint i = 0; i < arraySize; i ++)
+            for( int i = 0; i < arraySize; i ++)
             {
                 Assert.That(items.Contains(i), $"Missing expected value {i}");
             }

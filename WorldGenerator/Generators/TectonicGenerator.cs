@@ -21,7 +21,7 @@ namespace WorldGenerator.Generators
             _rand = new Random(seed);
         }
 
-        public TectonicLayer Generate()
+        public override dynamic Generate()
         {
             RandomInitialize();
             RemoveAnomalies(90);

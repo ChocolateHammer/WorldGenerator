@@ -10,7 +10,7 @@ namespace WorldGenerator.WorldLayers
     /// this class is a generic version that can communalize matrix stuff
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class WorldLayer<T> where T: IComparable
+    public class WorldLayer<T> : IWorldLayer<T> where T : IComparable
     {
 
         /// It makes sense to have a function to enforce the layers are 
@@ -59,11 +59,11 @@ namespace WorldGenerator.WorldLayers
         }
 
         /// <summary>
-        /// commonialize the walk/
+        /// commonalize the walk/
         /// </summary>
         /// <param name="comparer"></param>
         /// <returns></returns>
-        protected T Find(Func<T,T,bool> comparer)
+        protected T Find(Func<T, T, bool> comparer)
         {
             var currentChoice = Matrix[0, 0];
             for (int i = 0; i < Size; i++)
@@ -99,7 +99,7 @@ namespace WorldGenerator.WorldLayers
         public T GetValueAt(int x, int y)
         {
             var realCord = ConvertWrappedIndexToActualIndex(new Point(x, y));
-            return Matrix[realCord.X,realCord.Y];
+            return Matrix[realCord.X, realCord.Y];
         }
 
         public T GetValueAt(Point p)
@@ -114,7 +114,6 @@ namespace WorldGenerator.WorldLayers
             Matrix[realCord.X, realCord.Y] = value;
         }
 
-        [Obsolete]
         public void SetValueAt(int x, int y, T value)
         {
             SetValueAt(new Point(x, y), value);
@@ -130,14 +129,14 @@ namespace WorldGenerator.WorldLayers
         }
 
         public uint ConvertToActualIndex(int v)
-        { 
+        {
             //if it's in legal ranges just return it
-            if (v < Size-1 && v >= 0) return (uint)v;
+            if (v < Size - 1 && v >= 0) return (uint)v;
             //I'd tried to do this in a cleaner way but it got funky with negative vars
             //come back and simply this later right now I just want it to work.
-            if( v >= Size-1)
+            if (v >= Size - 1)
             {
-                return (uint)(v%Size);
+                return (uint)(v % Size);
             }
             else
             {
@@ -148,13 +147,13 @@ namespace WorldGenerator.WorldLayers
             }
         }
 
-        public void NormalizePoint( ref Point p)
+        public void NormalizePoint(ref Point p)
         {
-            p.X =(int) ConvertToActualIndex(p.X);
+            p.X = (int)ConvertToActualIndex(p.X);
             p.Y = (int)ConvertToActualIndex(p.Y);
         }
 
-        public Point CalcMidPoint( Point startingPoint, Point endingPoint)
+        public Point CalcMidPoint(Point startingPoint, Point endingPoint)
         {
             NormalizePoint(ref startingPoint);
             NormalizePoint(ref endingPoint);
@@ -164,7 +163,7 @@ namespace WorldGenerator.WorldLayers
             return new Point(midX, midY);
         }
 
-        public IEnumerable<Tuple<uint, uint, uint>>  GetBinaryTupleEnumerator()
+        public IEnumerable<Tuple<uint, uint, uint>> GetBinaryTupleEnumerator()
         {
             var values = new List<Tuple<uint, uint, uint>>();
 
@@ -181,10 +180,10 @@ namespace WorldGenerator.WorldLayers
 
                 //0,9 ->skip
                 //[0,5 ; 0,3; 0,2; 0,1] [2,4; 3;4][4,9;6,9;7,9;8;9]
-                uint next = (start + end +1) / 2;
+                uint next = (start + end + 1) / 2;
                 if (next != start)
                 {
-                    if(addTuple)
+                    if (addTuple)
                     {
                         items.Add(new Tuple<uint, uint, uint>(start, next, end));
                     }
@@ -197,7 +196,7 @@ namespace WorldGenerator.WorldLayers
             }
         }
 
-        public IEnumerable<uint> GetBinaryEnumerator()
+        public IEnumerable<int> GetBinaryEnumerator()
         {
             ///what I'm getting now for a 10x10 matrix is 
             //[5,2,1,0,3, 4,7,6,8,9]  what i think I need for this to work is
@@ -205,9 +204,9 @@ namespace WorldGenerator.WorldLayers
             //like[{0,5},{2,5},{1,2}.[0.1}... no....
             //the pint is to get a smooth transiztion...
             //{0,5},{5.9},{
-            var values = new List<uint>();
+            var values = new List<int>();
 
-            RecurseBinaryWalk(0, (uint)Size, values);
+            RecurseBinaryWalk(0, (int)Size, values);
 
             foreach (var v in values)
                 yield return v;
@@ -221,19 +220,19 @@ namespace WorldGenerator.WorldLayers
         /// <param name="start"></param>
         /// <param name="end"></param>
         /// <param name="items"></param>
-        private void RecurseBinaryWalk( uint start, uint end, List<uint> items )
+        private void RecurseBinaryWalk(int start, int end, List<int> items)
         {
             if (start != end)
             {
-                uint next = (start + end) / 2;
-                if (next != start 
-                    || (next == 0 && !items.Contains(0)) )
+                int next = (start + end) / 2;
+                if (next != start
+                    || (next == 0 && !items.Contains(0)))
                 {
                     items.Add(next);
                     RecurseBinaryWalk(start, next, items);
                     RecurseBinaryWalk(next, end, items);
                 }
-            } 
+            }
         }
 
         /// <summary>

@@ -7,8 +7,9 @@ namespace WorldGenerator.WorldLayers
     /// </summary>
     public class TopographicalLayer : WorldLayer<decimal>
     {
+        public static readonly string TopoName = "Topographical";
 
-        public TopographicalLayer( int size, decimal initialValue =0) : base("Topographical", size, initialValue)
+        public TopographicalLayer( int size, decimal initialValue =0) : base(TopoName, size, initialValue)
         {
         }
 

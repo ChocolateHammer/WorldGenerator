@@ -46,7 +46,7 @@ namespace WorldGenerator.Generators
         ///// Generates a new worldlayer object using the generator settings.
         ///// </summary>
         ///// <returns>generated world</returns>
-        //public abstract WorldLayer<T> Generate<T>() where T : IComparable;
+        public abstract dynamic Generate();
 
     }
 }

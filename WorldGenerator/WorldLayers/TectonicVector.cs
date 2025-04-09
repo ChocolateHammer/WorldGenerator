@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Drawing;
 using System.Numerics;
 using System.Runtime.Intrinsics;
 
@@ -18,6 +19,11 @@ namespace WorldGenerator.WorldLayers
 
         double _direction;
         private double _force;
+
+        public bool HasBeenProcessed
+        {
+            get;set;
+        }
 
         /// <summary>
         /// the angle 0-360 of the movement
@@ -109,39 +115,16 @@ namespace WorldGenerator.WorldLayers
         {
             var variance = Math.Abs(allowedDegrees) / 2;
 
-            //say we have direction of 5 or 0 since we count 1,2,3,4,....358,359,0,1,...
-            //calcaltion of the degree gets messy lets see if the simple rule works
-            if (Direction >= variance &&
-                Direction+variance <= 360)
-            {
-                var lowRange = NormalizeDegree(direction - variance);
-                var highRange = NormalizeDegree(direction + variance);
-
-                return (Direction >= lowRange
-                    && Direction <= highRange);
-            }
-            else if( Direction + variance > 360 )
-            {
-                //too close to 360 spin it backward then do the test
-
-                var lowRange = NormalizeDegree(direction -allowedDegrees - variance);
-                var highRange = NormalizeDegree(direction - allowedDegrees + variance);
-
-                return (Direction - allowedDegrees >= lowRange
-                    && Direction - allowedDegrees <= highRange);
-            }
-            else
-            {
-                //direction too close to zero apin it foward then do the test
-                var lowRange = NormalizeDegree(direction + allowedDegrees - variance);
-                var highRange = NormalizeDegree(direction + allowedDegrees + variance);
-
-                return (Direction + allowedDegrees >= lowRange
-                    && Direction + allowedDegrees <= highRange);
-            }
+            return (DifferenceInDirection(direction) <= variance);
         }
 
-        public double DirectionWithSign => (Direction > 180) ? Direction -360 : Direction;
+        public double DirectionWithSign() => GetDirectionWithSign(Direction);
+
+        public double GetDirectionWithSign(Double d)
+        {
+            d = d % 360;
+            return (d  > 180) ? d - 360 : d;
+        }
 
         public void AverageOut(TectonicVector prev, TectonicVector next)
         {
@@ -154,7 +137,7 @@ namespace WorldGenerator.WorldLayers
         /// the sum of vectors
         /// </summary>
         /// <returns></returns>
-        private double DirectionWithForceApplied() => DirectionWithSign * Force;
+        private double DirectionWithForceApplied() => DirectionWithSign() * Force;
 
         /// <summary>
         /// Sums out the array of vectors[including this one] and sets the vector to the
@@ -184,9 +167,70 @@ namespace WorldGenerator.WorldLayers
             Direction = NormalizeDegree(dWithForce);
         }
 
+        const double DEGREES_INCREMENT = 22.5D;
+    
+        public Point VectorIsFacing(Point p, double direction)
+        {
+            var directionDif = DifferenceInDirection(0);
+            directionDif = Math.Abs(GetDirectionWithSign(directionDif));
+            var singedD = DirectionWithSign();
+            var y = (singedD > 0) ? -1 : 1;
+
+            if (directionDif <= DEGREES_INCREMENT)
+            {
+                p.Offset(1, 0);
+            }
+            else if (directionDif <= DEGREES_INCREMENT*3)
+            {
+                p.Offset(1, y);
+            }
+            else if (directionDif <= DEGREES_INCREMENT * 5)
+            {
+                p.Offset(0, y);
+            }
+            else if (directionDif <= DEGREES_INCREMENT * 7)
+            {
+                p.Offset(-1, y);
+            }
+            else 
+            {
+                p.Offset(-1, 0);
+            }
+
+            return p;
+        }
+
+        public Point VectorIsFacing(Point p )
+        {
+            return VectorIsFacing(p, Direction);
+        }
+
         public override string ToString()
         {
             return $"(D:{Direction:F2},F:{Force:F2})";
+        }
+
+        /// <summary>
+        /// basically an assignment operator.  I
+        /// could have overridden the equal operator
+        /// but I think this is cleaner.
+        /// </summary>
+        /// <param name="v1"></param>
+        internal void SetFrom(TectonicVector v1)
+        {
+            Direction = v1.Direction;
+            Force = v1.Force;
+            HasBeenProcessed = v1.HasBeenProcessed;
+        }
+
+        internal double DifferenceInDirection(TectonicVector v)
+        {
+            return DifferenceInDirection(v.DirectionWithSign());
+        }
+
+        internal double DifferenceInDirection(double direction)
+        {
+            return Math.Abs(Direction - GetDirectionWithSign(direction));
         }
     }
 }

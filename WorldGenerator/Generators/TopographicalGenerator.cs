@@ -170,7 +170,7 @@ namespace WorldGenerator.Generators
             }
         } 
 
-        public TopographicalLayer Generate()
+        public override dynamic Generate()
         {
             GenerateLines();
             return Layer;

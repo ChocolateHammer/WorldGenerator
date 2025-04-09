@@ -21,7 +21,8 @@ namespace WorldGenerator.WorldLayers
     /// It's my though that by doing this I'll wind up generating fault lines that do a reasonable job of approximating it.</remarks>
     public class TectonicLayer : WorldLayer<TectonicVector>
     {
-        public TectonicLayer(int size) : base("Tectonic", size)
+        public const string TectonicName = "Tectonic";
+        public TectonicLayer(int size) : base(TectonicName, size)
         {
 
         }
@@ -46,6 +47,18 @@ namespace WorldGenerator.WorldLayers
             var r3x3 = GetValueAt(x + 1, y + 1);
             return [r1x1, r1x2, r1x3, r2x1, r2x3, r3x1, r3x2, r3x3];
         }
+
+        public void ClearHasBeenProcessed()
+        {
+            for (int x = 0; x < Size; x++)
+            {
+                for(int y = 0; y< Size; y++)
+                {
+                    this.Matrix[x, y].HasBeenProcessed = false;
+                }
+            }
+        }
+
 
     }
 }

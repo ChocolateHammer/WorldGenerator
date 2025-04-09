@@ -160,7 +160,7 @@ namespace WorldGenerator.Generators
             }
         }
 
-        public TopographicalLayer Generate()
+        public TopographicalLayer GenerateSin()
         {
             //InitalRandomize();
 
@@ -204,7 +204,7 @@ namespace WorldGenerator.Generators
             }
         }
 
-        internal TopographicalLayer GenerateWalkingRandom()
+        public override dynamic Generate()
         {
             GenerateWalkingRandomMap();
             for (int y = 0; y < WorldSize; y++)

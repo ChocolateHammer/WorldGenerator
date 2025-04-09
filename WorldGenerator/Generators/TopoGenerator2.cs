@@ -91,7 +91,7 @@ namespace WorldGenerator.Generators
         #endregion
 
 
-        public TopographicalLayer Generate()
+        public override dynamic Generate()
         {
             Randomize();
             DoMarchingSquaresPass();
