@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.XPath;
+﻿using System.Drawing;
 using WorldGenerator.WorldLayers;
 
-namespace WorldGenerator.Generators
+namespace WorldGenerator.Generators.failed
 {
     //The first version of the generator did random lines then tried to get mid values between lines
-    //the devition was actually pretty good with it but the algorythim kind of made a wood grain texture
+    //the deviation was actually pretty good with it but the algorythim kind of made a wood grain texture
     //world.  I think I need to try to do a kind of marching squares method.  This should accomplish that
     public class TopoGenerator2 : GeneratorBase
     {
@@ -41,8 +35,8 @@ namespace WorldGenerator.Generators
         internal decimal CalcValue(decimal v1, decimal v2, decimal baseValue)
         {
             //bend it back in range somewhat
-            if ((baseValue >= v1 && baseValue <= v2) ||
-                (baseValue >= v2 && baseValue <= v1))
+            if (baseValue >= v1 && baseValue <= v2 ||
+                baseValue >= v2 && baseValue <= v1)
             {
                 //if base value is in the domain [v1,.... baseValue, .... v2] no need to tweak it.
                 return baseValue;
@@ -107,7 +101,7 @@ namespace WorldGenerator.Generators
                 {
                     var h = Layer.GetValueAt(x, y);
                     h += GetNextRand(Deviation * 2) - Deviation;
-                    Layer.SetValueAt(new System.Drawing.Point(x, y), h);
+                    Layer.SetValueAt(new Point(x, y), h);
                 }
             }
         }
@@ -119,7 +113,7 @@ namespace WorldGenerator.Generators
                 for (int y = 0; y < Layer.Size; y++)
                 {
                     
-                    Layer.SetValueAt(new System.Drawing.Point(x, y), GetRandomHeight());
+                    Layer.SetValueAt(new Point(x, y), GetRandomHeight());
                 }
             }
         }
@@ -150,12 +144,12 @@ namespace WorldGenerator.Generators
 
         private void DoMarchingSquaresPass()
         {
-            int passes = _rand.Next((int)Layer.Size/5);
+            int passes = _rand.Next(Layer.Size/5);
             while(passes-->0)
             {
-                int radius =_rand.Next((int)Layer.Size/10);
-                int x = _rand.Next((int)Layer.Size);
-                int y = _rand.Next((int)Layer.Size);
+                int radius =_rand.Next(Layer.Size/10);
+                int x = _rand.Next(Layer.Size);
+                int y = _rand.Next(Layer.Size);
                 decimal h = GetRandomHeight();
 
                 for (double angle = 0; angle < 90; angle++)
@@ -170,10 +164,6 @@ namespace WorldGenerator.Generators
                             Layer.ApplyOffset(new Point(x - xPos, y + yPos), h + GetRandomDeviation());
                             Layer.ApplyOffset(new Point(x + xPos, y - yPos), h + GetRandomDeviation());
                             Layer.ApplyOffset(new Point(x - xPos, y - yPos), h + GetRandomDeviation());
-                            //Layer.SetValueAt(new System.Drawing.Point(x + xPos, y + yPos), h+ GetNextRand(Deviation * 2) - Deviation);
-                            //Layer.SetValueAt(new System.Drawing.Point(x - xPos, y + yPos), h+ GetNextRand(Deviation * 2) - Deviation);
-                            //Layer.SetValueAt(new System.Drawing.Point(x + xPos, y - yPos), h+ GetNextRand(Deviation * 2) - Deviation);
-                            //Layer.SetValueAt(new System.Drawing.Point(x - xPos, y - yPos), h+ GetNextRand(Deviation * 2) - Deviation);
                         }
                     }
                 }

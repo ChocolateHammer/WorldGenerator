@@ -1,9 +1,11 @@
 ﻿using System.Drawing;
-using System.Reflection.Emit;
 using WorldGenerator.WorldLayers;
 
-namespace WorldGenerator.Generators
+namespace WorldGenerator.Generators.failed
 {
+    /// <summary>
+    /// thrid failed attempt at a topo generator.
+    /// </summary>
     public class TopoGenerator3 : GeneratorBase
     {
         private Random _rand;
@@ -31,8 +33,8 @@ namespace WorldGenerator.Generators
         internal decimal CalcValue(decimal v1, decimal v2, decimal baseValue)
         {
             //bend it back in range somewhat
-            if ((baseValue >= v1 && baseValue <= v2) ||
-                (baseValue >= v2 && baseValue <= v1))
+            if (baseValue >= v1 && baseValue <= v2 ||
+                baseValue >= v2 && baseValue <= v1)
             {
                 //if base value is in the domain [v1,.... baseValue, .... v2] no need to tweak it.
                 return baseValue;
@@ -129,9 +131,9 @@ namespace WorldGenerator.Generators
             GenerateIndependentLine(0);
             for (int x = 0; x < WorldSize; x++)
             {
-                _layer.SetValueAt(new Point(x, (int)_layer.Size - 1), _layer.GetValueAt(new Point(x, 0)));
+                _layer.SetValueAt(new Point(x, _layer.Size - 1), _layer.GetValueAt(new Point(x, 0)));
             }
-            GenerateIndependentLine((int)(WorldSize / 2));
+            GenerateIndependentLine(WorldSize / 2);
         }
 
         public override dynamic Generate()

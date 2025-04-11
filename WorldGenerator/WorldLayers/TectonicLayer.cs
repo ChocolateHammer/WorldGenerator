@@ -1,23 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Numerics;
-using System.Runtime.Remoting;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WorldGenerator.WorldLayers
+﻿namespace WorldGenerator.WorldLayers
 {
 
 
     /// <summary>
     /// This class generates a Tectonic layer that can be used to advance the age of the world...
     /// </summary
-    /// <remarks>Originally I had planned on making random lines of incidence but thining about it in a more general
-    /// sense the crust floats on magma and the mangma currents are kind like boiling water[only much much slower.
-    /// My thought is that by following that logic we don't have to care about what's actually going on only whats happening
-    /// at the surface.  As such I'm randomizing the layer then running it through and algorythimn to average them out.  
+    /// <remarks>Originally I had planned on making random lines of incidence but thinking about it in a more general
+    /// sense the crust floats on magma and the magma currents are kind like boiling water[only much much slower.
+    /// My thought is that by following that logic we don't have to care about what's actually going on only what is happening
+    /// at the surface.  As such I'm randomizing the layer then running it through and algorithmic to average them out.  
     /// It's my though that by doing this I'll wind up generating fault lines that do a reasonable job of approximating it.</remarks>
     public class TectonicLayer : WorldLayer<TectonicVector>
     {

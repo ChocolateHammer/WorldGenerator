@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Runtime.Intrinsics;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using WorldGenerator.Generators;
 using WorldGenerator.WorldLayers;
 
@@ -17,18 +11,19 @@ namespace WorldGenerator
     /// work I'll start over and do thing properly. 
     /// 
     /// This class will ultimately have all the world layers and be able to do things like apply weather
-    /// techitonic movements, ocean currents, rain fall, and ultimately life layers, possibly even creating
+    /// tectonic movements, ocean currents, rain fall, and ultimately life layers, possibly even creating
     /// cities, and histories.
     /// 
     /// </summary>
     public class WorldManager
     {
-        Dictionary<string, dynamic> _layers = new Dictionary<string, dynamic>();
+        private Dictionary<string, dynamic> _layers = new Dictionary<string, dynamic>();
 
         public int Seed { get; }
         public int Size { get; }
+        public Dictionary<string, dynamic> Layers => _layers;
 
-        public WorldManager( int seed, int size, int maxHeight, int deviation )
+        public WorldManager(int seed, int size, int maxHeight, int deviation)
         {
             Seed = seed;
             Size = size;
@@ -50,29 +45,34 @@ namespace WorldGenerator
             var tectonicLayer = (TectonicLayer)_layers[TectonicLayer.TectonicName];
             var topoLayer = (TopographicalLayer)_layers[TopographicalLayer.TopoName];
 
-            for (int steps = 3; steps < Size / 8; steps += 5)
+            //the thought was that we'd run a couple of passes and the plates would get bigger but
+            //that isn't working right now,  it just takes longer to stay the same.
+            //need to think on this.....  Maybe a randomize interator... with an override until f = 0...
+            //would need to lower the rupture point if I tried that though.
+            //for (double rupturepoint = 2; rupturepoint < 5; rupturepoint++)
             {
-                MovePlatesByStep(tectonicLayer, topoLayer, steps);
+                MovePlates(tectonicLayer, topoLayer, 3);
             }
         }
 
         //Todo : need to write test for this haven't done it yet because there's a high likely hood that this is going to be thrown out.
-        private void MovePlatesByStep(TectonicLayer tectonicLayer, TopographicalLayer topoLayer, float rupturePoint)
+        private void MovePlates(TectonicLayer tectonicLayer, TopographicalLayer topoLayer, double rupturePoint)
         {
-            foreach( var y in tectonicLayer.GetBinaryEnumerator())
+            foreach (var y in tectonicLayer.GetBinaryEnumerator())
             {
                 double f = 0;
-                for( int x =0; x<Size; x++)
-                {        
-                    var v1 = tectonicLayer.GetValueAt(x, (int)y);
+                foreach( var x in tectonicLayer.GetBinaryEnumerator())
+                {
+                    var v1 = tectonicLayer.GetValueAt(x, y);
                     if (v1.HasBeenProcessed == false)
                     {
                         bool ruptured = false;
+                        var activePoint = new Point(x, y);
                         do
                         {
                             f += v1.Force;
-                            v1.HasBeenProcessed = true;
-                            var next_loc = v1.VectorIsFacing(new Point(x, (int)y));
+                            v1.HasBeenProcessed = true;  
+                            var next_loc = v1.VectorIsFacing(activePoint);
                             var v2 = tectonicLayer.GetValueAt(next_loc);
                             if (v1.DirectionInRange(30, v2.Direction))
                             {
@@ -81,6 +81,8 @@ namespace WorldGenerator
                                 v2.HasBeenProcessed = true;
                                 v1.AverageOut(v2);
                                 v2.SetFrom(v1);
+                                activePoint = next_loc;
+
                                 if (f >= rupturePoint)
                                 {
                                     //DoInLineRupter(f, next_loc);
@@ -112,16 +114,46 @@ namespace WorldGenerator
                                 }
                                 else
                                 {
-                                    //do the same stuff as above
+                                    //TODO: copy paste clean this up...
+                                    f += v1.Force;
+                                    v2.HasBeenProcessed = true;
+                                    v1.AverageOut(v2);
+                                    v2.SetFrom(v1);
+                                    activePoint = next_loc;
+
+                                    if (f >= rupturePoint)
+                                    {
+                                        //DoInLineRupter(f, next_loc);
+                                        topoLayer.ApplyOffset(next_loc, (decimal)(1 + (rupturePoint - f)));
+                                        ruptured = true;
+                                    }
                                 }
                             }
-                          
+
                         }
                         while (!ruptured);
                     }
 
                 }
             }
+        }
+
+        //just a stupid test function will delete this and replace it with something more legit when this isn't a poc.
+        internal TopographicalLayer CreateTechHistoGraph()
+        {
+            var retValue = new TopographicalLayer(Size, 0);
+            var topo = _layers[TectonicLayer.TectonicName];
+
+            for (int y = 0; y < Size; y++)
+            {
+                for (int x = 0; x < Size; x++)
+                {
+                    var cur = topo.GetValueAt(x, y);
+                    var dir = (decimal)(cur.Direction);
+                    retValue.SetValueAt(x, y, dir);
+                }
+            }
+            return retValue;
         }
     }
 }

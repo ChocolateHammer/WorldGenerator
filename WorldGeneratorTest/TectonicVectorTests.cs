@@ -15,7 +15,8 @@ namespace WorldGeneratorTest
         TestCase( 0, 345, 40, true ),
         TestCase( 0, 335, 40, false),
         TestCase( 360, 1, 10, true),
-        TestCase( 360, 8, 10, false)]
+        TestCase( 360, 8, 10, false),
+        TestCase( 90.1D, 90.1D, 15, true )]
         public  void  DirectionInRangeTest(double direction1, double direction2, double degree, bool expectedValue)
         {
             var vector = new TectonicVector(direction1, 10);

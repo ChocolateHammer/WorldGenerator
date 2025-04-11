@@ -1,4 +1,5 @@
 ﻿using WorldGenerator.Generators;
+using WorldGenerator.Generators.failed;
 using WorldGenerator.Renderers;
 using WorldGenerator.WorldLayers;
 

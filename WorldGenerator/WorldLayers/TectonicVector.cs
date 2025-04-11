@@ -230,7 +230,7 @@ namespace WorldGenerator.WorldLayers
 
         internal double DifferenceInDirection(double direction)
         {
-            return Math.Abs(Direction - GetDirectionWithSign(direction));
+            return Math.Abs((Direction - GetDirectionWithSign(direction))%360);
         }
     }
 }
